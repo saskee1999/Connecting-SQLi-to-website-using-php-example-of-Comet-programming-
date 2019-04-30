@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                
+                header
+                {
+                    border-bottom: solid;
+                    padding: 0px;
+                    overflow: hidden;
+                }
+
+                .tab{
+                    overflow: hidden;
+                    border: 1px solid #ccc;
+                    background-color: #f1f1f1;
+                }
+                .tab button{
+                    background-color: inherit;
+                    float: left;
+                    border: none;
+                    outline: none;
+                    cursor: pointer;
+                    padding: 14px 16px;
+                    transition: 0.3s;
+                }
+                .tab button:hover{
+                    background-color: #ddd;
+                }
+                .tab button.active{
+                    background-color: #ccc;
+                }
+                .tabContent{
+                    display: none;
+                    padding: 6px 12px;
+                    border: 1px solid #ccc;
+                    border-top: none;
+                }
+            </style>
+
+    </head>
+    <header>
+        <h2>Tabs</h2>
+    </header>
+    <body>
+        <div class="tab" id="tab">
+            <button class="tablinks" onclick='showTab(event, "temperature", "1" )' id="my_div1">Tab1</button>
+            <button class="tablinks" onclick='showTab(event, "seconds", "2")' id="my_div2" >Tab2</button>
+        </div>
+
+        <div id="temperature" class="tabContent">
+            <h3>This is a tab</h3>
+                    <br>
+                    <div id="info1"><b>Person info will be listed here...</b></div>
+                    </div>
+        <div id="seconds" class="tabContent">
+            <h3>
+                This is another tab
+            </h3>
+                <br>
+                <div id="info2"><b>Person info will be listed here...</b></div>
+                </div>
+        </div>
+
+        <script>
+            var global_tab_num="";
+            var gloabl_current_tab_id="";
+            var global_event;
+            var global_class_name;
+            function showTab(evt, input_tab, tab_num)
+            {
+                global_event=evt;
+                console.log("I have been activated");
+                global_tab_num=tab_num;
+                console.log(global_tab_num);
+                gloabl_current_tab_id=input_tab;
+                var i, tabcontent, tablinks;
+                tabcontent=document.getElementsByClassName("tabContent")
+                tablinks = document.getElementsByClassName("tablinks");
+                for(i=0;i<tabcontent.length;i++)
+                {
+                    tabcontent[i].style.display='none';
+                }
+                for(i=0;i<tablinks.length;i++)
+                {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(input_tab).style.display = "block";
+                global_event.currentTarget.className+=" active";
+
+                if (global_tab_num == "") {
+                    return;
+                } else { 
+                    xmlhttp = new XMLHttpRequest();
+                    xmlhttp.onreadystatechange = function() {
+                            document.getElementById("info"+global_tab_num).innerHTML = this.responseText;
+                    };
+                    xmlhttp.open("GET","getuser.php?q="+global_tab_num,true);
+                    xmlhttp.send();
+                }
+
+            }
+
+            function looping_func(str)
+            {
+                if (str == "") {
+                    return;
+                } else { 
+                    xmlhttp = new XMLHttpRequest();
+                    xmlhttp.onreadystatechange = function() {
+                            document.getElementById("info"+str).innerHTML = this.responseText;
+                    };
+                    xmlhttp.open("GET","getuser.php?q="+str,true);
+                    xmlhttp.send();
+                }
+            }
+
+            setInterval(function(){
+            $('#tab').load(looping_func(global_tab_num));
+            }, 5000) /* time in milliseconds (ie 1 seconds)*/
+        </script>
+
+    </body>
+</html>
